@@ -1,0 +1,28 @@
+BLIS_PREFIX = ./
+BLIS_INC    = $(BLIS_PREFIX)
+BLIS_LIB    = $(BLIS_PREFIX)
+BLIS_LIB_NAME = smm
+
+OTHER_LIBS  = -lm -fopenmp
+
+CC          = g++
+CFLAGS      = -O2 -g -I$(BLIS_INC) -L$(BLIS_LIB) -lsmm -lopenblas
+LINKER      = $(CC)
+
+OBJS        = benchmark.c
+
+%.o: %.c
+	 $(CC) $(CFLAGS) -fopenmp -ldl -c $< -o $@
+
+all: $(OBJS)
+	$(LINKER) $(OBJS) $(CFLAGS) $(OTHER_LIBS) -o a.out
+
+install:
+		mkdir -p $(PREFIX)/SMM
+		mkdir -p $(PREFIX)/SMM/lib
+		cp -f ./libsmm.so $(PREFIX)/SMM/lib/
+		mkdir -p $(PREFIX)/SMM/include
+		cp -f ./*.h $(PREFIX)/SMM/include/
+
+clean: 
+		rm -rf *.o *.so
