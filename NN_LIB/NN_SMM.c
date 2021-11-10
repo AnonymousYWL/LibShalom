@@ -21,9 +21,7 @@ void LibShalom_sgemm(int transa,int transb, float *C, float *A,
 
 	else
 	{
-			float *SB= ( float * ) malloc( K* 16 * sizeof( float ) );
-			SGEMM_NT(C, A, B, M, N, K, SB);
-			free(SB);
+		SGEMM_NT(C, A, B, M, N, K);
 	}
 
 }

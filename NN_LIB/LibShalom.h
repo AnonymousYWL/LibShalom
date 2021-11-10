@@ -18,7 +18,7 @@ extern int Tm, Tn, T;
 void LibShalom_sgemm(int transa, int transb, float *C, float *A, float *B, long M, long N, long K);
 void SGEMM_NN(float *C, float *A, float *B, long M, long N, long K, float *SB);
 void SGEMM_NN_L1(float *C, float *A, float *B, long M, long N, long K);
-void SGEMM_NT(float *C, float *A, float *B, long M, long N, long K, float *SB);
+void SGEMM_NT(float *C, float *A, float *B, long M, long N, long K);
 
 void LibShalom_sgemm_mp(int transa, int transb, float *C, float *A, float *B, long M, long N, long K);
 void SGEMM_NT_mp(float *C, float *A, float *B, long M, long N, long K);

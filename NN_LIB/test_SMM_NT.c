@@ -3,17 +3,14 @@
 
 
 /* kernels of NT small SGEMM*/
-void SGEMM_NT(float *C, float *A, float *B, long M, long N, long K, float *SB)
+void SGEMM_NT(float *C, float *A, float *B, long M, long N, long K)
 {
 	asm volatile(
 		".macro PACK_KERNEL5x4_BEGIN_K             	 \n"
 		"										 	 \n"
 
-		/* Load A from  memory/cache to vector register */
 		"	ldr		q0, [x11], #16					 \n"
 		"	ldr		q1, [x12], #16				     \n"
-
-		/* Load B from  memory/cache to vector register */
 		"	ldr		q5, [x16], #16					 \n"
 
 		"   prfm    PLDL1KEEP, [x11, #64]       	 \n"
@@ -41,7 +38,6 @@ void SGEMM_NT(float *C, float *A, float *B, long M, long N, long K, float *SB)
 
 		"	ldr		q8, [x19], #16					 \n"
 		"	ldr		q9, [x11], #16					 \n"
-		/* Overlapping computation and packing */
 		"	st4		{v5.s, v6.s, v7.s, v8.s}[0], [x24]		\n"
 		"	add		x24, x24, x8, lsl #2			 \n"
 
@@ -81,14 +77,13 @@ void SGEMM_NT(float *C, float *A, float *B, long M, long N, long K, float *SB)
 		".endm									 	 \n"
 
 
-		/* loop unroll factor is 8*/
+
 		".macro PACK_KERNEL5x4_K0                    \n"
 
 		"	prfm 	PLDL1KEEP, [x16, #64]			 \n"
 
 		"	ldr		q6, [x17], #16					 \n"
 
-		/*   vector-vector 	 FMA 					 */
 		"	fmla	v12.4s, v0.4s, v5.4s			 \n"
 		"	fmla	v13.4s, v1.4s, v5.4s			 \n"
 
@@ -304,15 +299,15 @@ void SGEMM_NT(float *C, float *A, float *B, long M, long N, long K, float *SB)
 		"	add		x10, x10, x5, lsl #2 			 \n"
 
 		"	stp		q22, q23, [x25, #32]			 \n"
-		"	add		x25, x29, x6					 \n"
+		"	add		x25, x29, x4, lsl #2			 \n"
 		"	stp		q24, q25, [x26, #32]			 \n"
-		"	add		x26, x29, x6, lsl #1			 \n"
+		"	add		x26, x29, x4, lsl #3			 \n"
 		"	stp		q26, q27, [x27, #32]			 \n"
-		"	add		x27, x25, x6, lsl #1 			 \n"
+		"	add		x27, x25, x4, lsl #3 			 \n"
 		"	stp		q28, q29, [x28, #32]			 \n"
-		"	add		x28, x26, x6, lsl #1 			 \n"
+		"	add		x28, x26, x4, lsl #3 			 \n"
 		"	stp		q30, q31, [x29, #32]			 \n"
-		"	add		x29, x27, x6, lsl #1			 \n"
+		"	add		x29, x27, x4, lsl #3			 \n"
 
 		".endm 									 	 \n"
 
@@ -411,7 +406,7 @@ void SGEMM_NT(float *C, float *A, float *B, long M, long N, long K, float *SB)
 		"	fmla	v26.4s, v10.4s, v2.s[0]			 \n"
 		"	fmla	v27.4s, v11.4s, v2.s[0]			 \n"
 
-		"	ldr		q5, [x11], #16					 \n"  
+		"	ldr		q5, [x11], #16					 \n"  //预取
 
 		"	fmla	v28.4s, v10.4s, v3.s[0]			 \n"
 		"	fmla	v29.4s, v11.4s, v3.s[0]			 \n"
@@ -500,7 +495,7 @@ void SGEMM_NT(float *C, float *A, float *B, long M, long N, long K, float *SB)
 		"	fmla	v26.4s, v10.4s, v2.s[2]			 \n"
 		"	fmla	v27.4s, v11.4s, v2.s[2]			 \n"
 
-		"	ldr		q7, [x13], #16					 \n"  
+		"	ldr		q7, [x13], #16					 \n"  //预取
 
 		"	fmla	v28.4s, v10.4s, v3.s[2]			 \n"
 		"	fmla	v29.4s, v11.4s, v3.s[2]			 \n"
@@ -591,7 +586,7 @@ void SGEMM_NT(float *C, float *A, float *B, long M, long N, long K, float *SB)
 		"	fmla	v26.4s, v10.4s, v7.s[0]			 \n"
 		"	fmla	v27.4s, v11.4s, v7.s[0]			 \n"
 
-		"	ldr		q2, [x13], #16					 \n"  
+		"	ldr		q2, [x13], #16					 \n"  //预取
 
 		"	fmla	v28.4s, v10.4s, v0.s[0]			 \n"
 		"	fmla	v29.4s, v11.4s, v0.s[0]			 \n"
@@ -683,7 +678,7 @@ void SGEMM_NT(float *C, float *A, float *B, long M, long N, long K, float *SB)
 		"	fmla	v26.4s, v10.4s, v7.s[2]			 \n"
 		"	fmla	v27.4s, v11.4s, v7.s[2]			 \n"
 
-		"	ldr		q4, [x15], #16					 \n"  
+		"	ldr		q4, [x15], #16					 \n"  //预取
 
 		"	fmla	v28.4s, v10.4s, v0.s[2]			 \n"
 		"	fmla	v29.4s, v11.4s, v0.s[2]			 \n"
@@ -859,7 +854,7 @@ void SGEMM_NT(float *C, float *A, float *B, long M, long N, long K, float *SB)
 		"	fmla	v26.4s, v10.4s, v2.s[0]			 \n"
 		"	fmla	v27.4s, v11.4s, v2.s[0]			 \n"
 
-//		"	ldr		q5, [x11], #16					 \n"  
+//		"	ldr		q5, [x11], #16					 \n"  //预取
 
 		"	fmla	v28.4s, v10.4s, v3.s[0]			 \n"
 		"	ldr		q10, [x24], #16					 \n"
@@ -937,7 +932,7 @@ void SGEMM_NT(float *C, float *A, float *B, long M, long N, long K, float *SB)
 		"	fmla	v26.4s, v10.4s, v2.s[2]			 \n"
 		"	fmla	v27.4s, v11.4s, v2.s[2]			 \n"
 
-//		"	ldr		q7, [x13], #16					 \n" 
+//		"	ldr		q7, [x13], #16					 \n"  //预取
 
 		"	fmla	v28.4s, v10.4s, v3.s[2]			 \n"
 		"	ldr		q10, [x24], #16					 \n"
@@ -1522,15 +1517,15 @@ void SGEMM_NT(float *C, float *A, float *B, long M, long N, long K, float *SB)
 		"	add		x10, x10, x5, lsl #2 			 \n"
 
 		"	stp		q12, q13, [x25]			 		 \n"
-		"	add		x25, x29, x6					 \n"
+		"	add		x25, x29, x4, lsl #2			 \n"
 		"	stp		q14, q15, [x26]			 	     \n"
-		"	add		x26, x25, x6					 \n"
+		"	add		x26, x25, x4, lsl #2			 \n"
 		"	stp		q16, q17, [x27]					 \n"
-		"	add		x27, x26, x6					 \n"
+		"	add		x27, x26, x4, lsl #2			 \n"
 		"	stp		q18, q19, [x28]					 \n"
-		"	add		x28, x27, x6					 \n"
+		"	add		x28, x27, x4, lsl #2			 \n"
 		"	stp		q20, q21, [x29]					 \n"
-		"	add		x29, x28, x6					 \n"
+		"	add		x29, x28, x4, lsl #2			 \n"
 
 		".endm 									 	 \n"
 
@@ -2192,15 +2187,8 @@ void SGEMM_NT(float *C, float *A, float *B, long M, long N, long K, float *SB)
 		"	ldr		x3, %[M]						 \n"
 		"	ldr		x4, %[N]						 \n"
 		"	ldr		x5, %[K]						 \n"
-//		"	ldr		x7, %[temp]						 \n"
-
-		"	ldr		x19, %[SB]						 \n"
-		"	lsl		x6, x4, #2						 \n"  //sizeof(N)
-
-		"	add		sp, sp, #-16					 \n"
 
 		"	mov		x23, #5						 	 \n"
-//		"	lsl		x8, x5, #2						 \n"  //sizeof(K)
 
 		"   prfm    PLDL1KEEP, [x1]             	 \n"
 		"   prfm    PLDL1KEEP, [x2]             	 \n"
@@ -2208,9 +2196,13 @@ void SGEMM_NT(float *C, float *A, float *B, long M, long N, long K, float *SB)
 		"	udiv	x30, x3, x23				 	 \n"	// M / 5
 		"	lsr		x20, x4, #4					 	 \n"	// N / 16
 
+		"	lsl		x6, x5, #6 						 \n"
+		"	sub 	sp, sp, x6   				 	 \n"
+
 		"	msub	x23, x30, x23, x3 				 \n"	// M % 5
-		"	str 	x23, [sp] 						 \n"
-		"	mov 	x23, x19 						 \n"    //SB
+		"	mov		x6, x23 						 \n"
+//		"	mov 	x23, x19 						 \n"    //SB
+		"	mov 	x23, sp 						 \n"
 
 		"	cmp		x20, #0							 \n"
 		"	beq		BEGIN_N8						 \n"
@@ -2221,10 +2213,10 @@ void SGEMM_NT(float *C, float *A, float *B, long M, long N, long K, float *SB)
 		"BEGIN_N16:								 	 \n"
 
 		"	mov 	x25, x0   						 \n"   //C1*
-		"	add		x26, x25, x6 					 \n"   //C2*
-		"	add 	x27, x25, x6, lsl #1 			 \n"   //C3*
-		" 	add 	x28, x26, x6, lsl #1 			 \n"   //C4*
-		"	add		x29, x27, x6, lsl #1 			 \n"   //C5*
+		"	add		x26, x25, x4, lsl #2 			 \n"   //C2*
+		"	add 	x27, x25, x4, lsl #3 			 \n"   //C3*
+		" 	add 	x28, x26, x4, lsl #3 			 \n"   //C4*
+		"	add		x29, x27, x4, lsl #3 			 \n"   //C5*
 
 		"	mov		x10, x1   						 \n"
 		"	mov		x21, x30  						 \n"
@@ -2304,11 +2296,11 @@ void SGEMM_NT(float *C, float *A, float *B, long M, long N, long K, float *SB)
 		"	sub		x23, x23, x8, lsl #2			 \n"    //还原SB的索引
 
 		"	sub 	x29, x29, x8, lsl #2			 \n"    //C矩阵的偏移量还原
-		"	add		x25, x29, x6					 \n"
-		"	add		x26, x25, x6					 \n"
-		"	add		x27, x26, x6					 \n"
-		"	add		x28, x27, x6					 \n"
-		"	add		x29, x28, x6 					 \n"
+		"	add		x25, x29, x4, lsl #2			 \n"
+		"	add		x26, x25, x4, lsl #2			 \n"
+		"	add		x27, x26, x4, lsl #2			 \n"
+		"	add		x28, x27, x4, lsl #2			 \n"
+		"	add		x29, x28, x4, lsl #2 			 \n"
 
 		"	add		x10, x10, x5, lsl #4			 \n"  
 		"	add 	x10, x10, x5, lsl #2 			 \n"	// A + 5行
@@ -2387,8 +2379,7 @@ void SGEMM_NT(float *C, float *A, float *B, long M, long N, long K, float *SB)
 
 		"	mov		x24, x23	     				 \n"  //B0*
 
-		"	ldr		x21, [sp]					 	 \n"
-		"	cmp		x21, #4							 \n"
+		"	cmp		x6, #4							 \n"
 		"	bne 	BEGIN_M3 						 \n"
 
 
@@ -2446,7 +2437,7 @@ void SGEMM_NT(float *C, float *A, float *B, long M, long N, long K, float *SB)
 		//--------------------------------------------------------
 
 		"BEGIN_M3:			 						 \n"
-		"	cmp		x21, #3							 \n"
+		"	cmp		x6, #3							 \n"
 		"	bne 	BEGIN_M2 						 \n"
 
 		"	mov		x11, x10 						 \n"
@@ -2495,7 +2486,7 @@ void SGEMM_NT(float *C, float *A, float *B, long M, long N, long K, float *SB)
 //----------------------------------------------------------
 		"BEGIN_M2:			 						 \n"
 
-		"	cmp		x21, #2							 \n"
+		"	cmp		x6, #2							 \n"
 		"	bne 	BEGIN_M1 						 \n"
 
 		"	mov		x11, x10 						 \n"
@@ -2542,7 +2533,7 @@ void SGEMM_NT(float *C, float *A, float *B, long M, long N, long K, float *SB)
 
 		"BEGIN_M1:									 \n"
 
-		"	cmp		x21, #1							 \n"
+		"	cmp		x6, #1							 \n"
 		"	bne 	END_M 						 	 \n"
 
 		"	mov		x11, x10 						 \n"
@@ -2602,10 +2593,10 @@ void SGEMM_NT(float *C, float *A, float *B, long M, long N, long K, float *SB)
 		"N8_BEGIN_PACKB:							 \n"
 
 		"	mov 	x25, x0   						 \n"   //C1*
-		"	add		x26, x25, x6 					 \n"   //C2*
-		"	add 	x27, x25, x6, lsl #1 			 \n"   //C3*
-		" 	add 	x28, x26, x6, lsl #1 			 \n"   //C4*
-		"	add		x29, x27, x6, lsl #1 			 \n"   //C5*
+		"	add		x26, x25, x4, lsl #2 			 \n"   //C2*
+		"	add 	x27, x25, x4, lsl #3 			 \n"   //C3*
+		" 	add 	x28, x26, x4, lsl #3 			 \n"   //C4*
+		"	add		x29, x27, x4, lsl #3 			 \n"   //C5*
 
 		"	mov		x10, x1   						 \n"   //A0*
 		"	mov		x21, x30  						 \n"   // M / 5
@@ -2699,8 +2690,7 @@ void SGEMM_NT(float *C, float *A, float *B, long M, long N, long K, float *SB)
 
 		"	mov		x24, x23	     				 \n"  //B0*
 
-		"	ldr		x21, [sp]						 \n"
-		"	cmp		x21, #4							 \n"
+		"	cmp		x6, #4							 \n"
 		"	bne 	N8_BEGIN_M3 					 \n"
 
 	//--------------------------------------------------------
@@ -2757,7 +2747,7 @@ void SGEMM_NT(float *C, float *A, float *B, long M, long N, long K, float *SB)
 
 		"N8_BEGIN_M3: 								 \n"
 
-		"	cmp		x21, #3							 \n"
+		"	cmp		x6, #3							 \n"
 		"	bne 	N8_BEGIN_M2 					 \n"
 
 		"	mov		x11, x10 						 \n"
@@ -2812,7 +2802,7 @@ void SGEMM_NT(float *C, float *A, float *B, long M, long N, long K, float *SB)
 		"N8_BEGIN_M2:								 \n"
 
 
-		"	cmp		x21, #2							 \n"
+		"	cmp		x6, #2							 \n"
 		"	bne 	N8_BEGIN_M1 					 \n"
 
 		"	mov		x11, x10 						 \n"
@@ -2863,7 +2853,7 @@ void SGEMM_NT(float *C, float *A, float *B, long M, long N, long K, float *SB)
 		"N8_BEGIN_M1:								 \n"
 
 
-		"	cmp		x21, #1							 \n"
+		"	cmp		x6, #1							 \n"
 		"	bne 	N8_END_M 					 	 \n"
 
 		"	mov		x11, x10 						 \n"
@@ -2903,7 +2893,8 @@ void SGEMM_NT(float *C, float *A, float *B, long M, long N, long K, float *SB)
 
 		"END_N:									 	 \n"
 
-		"	add		sp, sp, #16						 \n"
+		"	lsl		x6, x5, #6 						 \n"
+		"	add 	sp, sp, x6   				 	 \n"
 		
 		:
 		:	
@@ -2912,8 +2903,7 @@ void SGEMM_NT(float *C, float *A, float *B, long M, long N, long K, float *SB)
             [B] "m" (B), 
             [M] "m" (M),
             [N] "m" (N),
-            [K] "m" (K),
-            [SB] "m" (SB)
+            [K] "m" (K)
         :   "x0", "x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8",
         	"x9", "x10", "x11", "x12", "x13","x14", "x15", "x16",
         	"x17", "x18", "x19", "x20", "x21", "x22", "x23", "x24","x25",
