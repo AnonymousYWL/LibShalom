@@ -22,6 +22,8 @@ void SGEMM_NT(float *C, float *A, float *B, long M, long N, long K);
 
 void LibShalom_sgemm_mp(int transa, int transb, float *C, float *A, float *B, long M, long N, long K);
 void SGEMM_NT_mp(float *C, float *A, float *B, long M, long N, long K);
+void SGEMM_NT_kernel_exist_1(float *C, float *A, float *B, long	M, long N, long K, 
+			 	long LN, long LK, float *SB, long k_tag);
 
 void DGEMM_NN(double *C, double *A, double *B, long M, long N, long K);
 void LibShalom_dgemm(int transa, int transb, double *C, double *A, double *B, long M, long N, long K);

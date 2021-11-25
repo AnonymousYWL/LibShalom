@@ -1,7 +1,7 @@
-#include<stdio.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <omp.h>
-#include<math.h>
+#include <math.h>
 #include "LibShalom.h"
 
 int Tm, Tn, T;
@@ -6359,7 +6359,7 @@ void SGEMM_NT_mp(float *C, float *A, float *B, long M, long N,
     void *ptr;
     int i;
 
-    posix_memalign(&ptr, 64, T * GEMM_K * 16  *sizeof( float ));
+    posix_memalign(&ptr, 64, T * GEMM_K * 17  *sizeof( float ));
     float *SSB = (float *)ptr;
 
     // Determines the number of threads to parallelize the N-dimension
@@ -6431,9 +6431,20 @@ void SGEMM_NT_mp(float *C, float *A, float *B, long M, long N,
 					float *AA = A + ii * K + kk;
 					float *BB = B + jj * K + kk ;
 
-					// the kernels of irregular-shaped GEMM
+					//Handling cases with N = 1
+				 	if(nc % 2 == 1 && nc >= 17)
+				 	{
+					 	SGEMM_NT_kernel_exist_1(CC, AA, BB, mc, 17, 
+					 		kc, N, K, &SSB[id * GEMM_K * 17], kk);
+
+					 	CC = CC + 17;
+					 	BB = BB + 17 * K;
+
+				 	}
+
+				 	// the kernels of irregular-shaped GEMM
 				 	SGEMM_NT_KERNEL_MP(CC, AA, BB, mc, nc, 
-				 		kc, N, K, &SSB[id * GEMM_K * 16], kk);
+				 		kc, N, K, &SSB[id * GEMM_K * 17], kk);
 	    		}
     		}
 		}
