@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include "LibShalom.h"
 
-
 void SGEMM_NT_kernel_exist_1(float *C, float *A, float *B, long	M, long N, long K, 
 			 	long LN, long LK, float *SB, long k_tag)
 {
@@ -1106,7 +1105,7 @@ void SGEMM_NT_kernel_exist_1(float *C, float *A, float *B, long	M, long N, long 
 				"	add		x13, x12, x6, lsl #2			 	\n"	//A2*
 				"	add		x14, x13, x6, lsl #2			 	\n"	//A3*
 
-				"	prfm		PLDL1KEEP, [x11, #64]			\n"
+				"	prfm	PLDL1KEEP, [x11, #64]			\n"
 				"	prfm    PLDL1KEEP, [x12, #64]			\n"
 				"	prfm    PLDL1KEEP, [x13, #64]			\n"
 				"	prfm    PLDL1KEEP, [x14, #64]			\n"		
@@ -1172,7 +1171,7 @@ void SGEMM_NT_kernel_exist_1(float *C, float *A, float *B, long	M, long N, long 
 				"	add		x13, x12, x6, lsl #2			 	\n"	//A2*
 				"	add		x14, x13, x6, lsl #2			 	\n"	//A3*
 
-				"	prfm		PLDL1KEEP, [x11, #64]			\n"
+				"	prfm	PLDL1KEEP, [x11, #64]			\n"
 				"	prfm    PLDL1KEEP, [x12, #64]			\n"
 				"	prfm    PLDL1KEEP, [x13, #64]			\n"
 				"	prfm    PLDL1KEEP, [x14, #64]			\n"
@@ -1289,26 +1288,27 @@ void SGEMM_NT_kernel_exist_1(float *C, float *A, float *B, long	M, long N, long 
 				"END_M4N17: 												\n"
 				"	add 	sp, sp ,#32  								\n"
 
+
 				:
 				:	
-						[C] "m" (C),
-						[A] "m" (A),
-            [B] "m" (B), 
-            [M] "m" (M),
-            [N] "m" (N),
-            [K] "m" (K),
-            [LN] "m" (LN),
-            [LK] "m" (LK),
-            [SB] "m" (SB),
-            [k_tag] "m" (k_tag)
-        :   "x0", "x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8",
-        		"x9", "x10", "x11", "x12", "x13","x14", "x15", "x16",
-        		"x17", "x18", "x19", "x20", "x21", "x22", "x23", "x24","x25",
-        		"x26", "x27", "x28", "x29", "x30",
-            "v0", "v1", "v2", "v3", "v4", "v5", "v6", "v7",
-            "v8", "v9", "v10", "v11", "v12", "v13", "v14", "v15",
-            "v16", "v17", "v18", "v19", "v20", "v21", "v22", "v23",
-            "v24", "v25", "v26", "v27", "v28", "v29", "v30", "v31"
+					[C] "m" (C),
+					[A] "m" (A),
+			        [B] "m" (B), 
+			        [M] "m" (M),
+			        [N] "m" (N),
+			        [K] "m" (K),
+			        [LN] "m" (LN),
+			        [LK] "m" (LK),
+			        [SB] "m" (SB),
+			        [k_tag] "m" (k_tag)
+				:   "x0", "x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8",
+				    "x9", "x10", "x11", "x12", "x13","x14", "x15", "x16",
+				    "x17", "x18", "x19", "x20", "x21", "x22", "x23", "x24","x25",
+				    "x26", "x27", "x28", "x29", "x30",
+			        "v0", "v1", "v2", "v3", "v4", "v5", "v6", "v7",
+			        "v8", "v9", "v10", "v11", "v12", "v13", "v14", "v15",
+			        "v16", "v17", "v18", "v19", "v20", "v21", "v22", "v23",
+			        "v24", "v25", "v26", "v27", "v28", "v29", "v30", "v31"
 
 	);
 

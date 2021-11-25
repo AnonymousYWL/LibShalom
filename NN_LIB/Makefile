@@ -1,4 +1,4 @@
-objects= test_temp_L1.o test_temp.o NN_SMM.o test_SMM_NT.o SMM_thread.o SMM_NT_thread.o DGEMM_NN.o
+objects= test_temp_L1.o test_temp.o NN_SMM.o test_SMM_NT.o SMM_m4n17.o SMM_thread.o SMM_NT_thread.o DGEMM_NN.o
 
 #main: $(objects)
 #	g++ $(objects) -fopenmp -lopenblas -O3 -o main
@@ -19,6 +19,8 @@ test_SMM_NT.o:test_SMM_NT.c
 	g++ -c -fPIC test_SMM_NT.c -o test_SMM_NT.o
 SMM_thread.o:SMM_thread.c
 	g++ -c -fPIC -fopenmp SMM_thread.c -o SMM_thread.o
+SMM_m4n17.o:SMM_m4n17.c
+	g++ -c -fPIC -fopenmp SMM_m4n17.c -o SMM_m4n17.o
 SMM_NT_thread.o:SMM_NT_thread.c
 ifeq ($(TARGET), KP920)
 	g++ -c -fPIC -fopenmp -D XXX SMM_NT_thread.c -o SMM_NT_thread.o 

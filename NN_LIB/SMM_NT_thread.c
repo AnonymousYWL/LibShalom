@@ -6432,19 +6432,25 @@ void SGEMM_NT_mp(float *C, float *A, float *B, long M, long N,
 					float *BB = B + jj * K + kk ;
 
 					//Handling cases with N = 1
-				 	if(nc % 2 == 1 && nc >= 17)
+				 	if((nc % 2 == 1) && (nc >= 17))
 				 	{
 					 	SGEMM_NT_kernel_exist_1(CC, AA, BB, mc, 17, 
 					 		kc, N, K, &SSB[id * GEMM_K * 17], kk);
 
-					 	CC = CC + 17;
+						float *CCC = CC + 17;
 					 	BB = BB + 17 * K;
-
+						// the kernels of irregular-shaped GEMM
+				 		SGEMM_NT_KERNEL_MP(CCC, AA, BB, mc, nc -17, 
+				 			kc, N, K, &SSB[id * GEMM_K * 17], kk);
+					
+				 	}
+				 	else
+				 	{
+				 		// the kernels of irregular-shaped GEMM
+				 		SGEMM_NT_KERNEL_MP(CC, AA, BB, mc, nc, 
+				 			kc, N, K, &SSB[id * GEMM_K * 17], kk);
 				 	}
 
-				 	// the kernels of irregular-shaped GEMM
-				 	SGEMM_NT_KERNEL_MP(CC, AA, BB, mc, nc, 
-				 		kc, N, K, &SSB[id * GEMM_K * 17], kk);
 	    		}
     		}
 		}
