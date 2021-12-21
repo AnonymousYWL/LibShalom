@@ -110,3 +110,4 @@ all: $(OBJS)
 # Note
 The matrices are stored in the row-major format in this library.
 We will keep this library updated and maintained.
+Contact: Weiling Yang (2954427597@qq.com)
