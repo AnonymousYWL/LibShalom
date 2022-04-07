@@ -4,7 +4,7 @@
 #include <math.h>
 #include "LibShalom.h"
 
-int Tm, Tn, T;
+int Tm=0, Tn=0, T;
 
 void SGEMM_NT_KERNEL_MP(float *C, float *A, float *B, long	M, long N, long K, 
 			long LN, long LK, float *SB, long k_tag)
@@ -6353,40 +6353,16 @@ void SGEMM_NT_mp(float *C, float *A, float *B, long M, long N,
 {
 
 //	omp_set_num_threads(T);
-    long GEMM_K = 320;
-    long GEMM_M = 256;
-    long GEMM_N = 4096;
+ //  long GEMM_K = 320;
+    //long GEMM_M = 256;
+    //long GEMM_N = 4096;
     void *ptr;
     int i;
 
     posix_memalign(&ptr, 64, T * GEMM_K * 17  *sizeof( float ));
     float *SSB = (float *)ptr;
 
-    // Determines the number of threads to parallelize the N-dimension
-    Tn= ceil(sqrt(T * N / M));
-
-    for(i = 0;  i < vec.size(); i++)
-    {
-    	if(Tn <= vec[i])
-    	{
-    		Tn = vec[i];
-    		break;
-    	}
-    }
-
-    if(Tn > T)
-    	Tn = T;
-
-// Determines the number of threads to parallelize the M-dimension
-    Tm = T / Tn;
-
-//    Tn =T;
-//   Tm=1;
-
-//    #ifdef XXX
-//    	printf("KP920\n");
-//    #endif
-   
+	//Dete_grad_threads_nums(T, M, N);
     #pragma omp parallel num_threads(T) 
     {
     	long ii, jj, kk;
