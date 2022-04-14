@@ -9,7 +9,7 @@ __This work continues to be optimized, and we need some time. Packing at micro-k
 
 
 # Paper information
-Weiling Yang, Jianbin Fang, Dezun Dong, Xing Su, Zheng Wang: LIBSHALOM: optimizing small and irregular-shaped matrix multiplications on ARMv8 multi-cores. SC 2021
+__Weiling Yang, Jianbin Fang, Dezun Dong, Xing Su, Zheng Wang: LIBSHALOM: optimizing small and irregular-shaped matrix multiplications on ARMv8 multi-cores. SC 2021__
 
 # Software dependences
 - [GNU Compiler (GCC)](https://gcc.gnu.org/) (>=v8.2)
