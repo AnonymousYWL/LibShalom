@@ -1,5 +1,5 @@
 objects= test_temp_L1.o test_temp.o NN_SMM.o test_SMM_NT.o SMM_m4n17.o \
-SMM_thread.o SMM_NT_thread.o DGEMM_NN.o SMM_NN_new.o PACK.o
+SMM_thread.o SMM_NT_thread.o DGEMM_NN.o SMM_NN_new.o SMM_NT_new.o PACK.o
 
 #main: $(objects)
 #	g++ $(objects) -fopenmp -lopenblas -O3 -o main
@@ -29,11 +29,13 @@ else
 	g++ -c -fPIC -fopenmp -D XXX SMM_NT_thread.c -o SMM_NT_thread.o
 endif
 SMM_NN_new.o:SMM_NN_new.c
-	g++ -c -fPIC -fopenmp SMM_NN_new.c -o SMM_NN_new.o
+	g++ -O2 -c -fPIC -fopenmp SMM_NN_new.c -o SMM_NN_new.o
+SMM_NT_new.o:SMM_NT_new.c
+	g++ -O2 -c -fPIC -fopenmp SMM_NT_new.c -o SMM_NT_new.o
 DGEMM_NN.o:DGEMM_NN.c
-	g++ -c -fPIC DGEMM_NN.c -o DGEMM_NN.o
+	g++ -O2 -c -fPIC DGEMM_NN.c -o DGEMM_NN.o
 PACK.o:PACK.c
-	g++ -c -fPIC -fopenmp PACK.c -o PACK.o
+	g++ -O2 -c -fPIC -fopenmp PACK.c -o PACK.o
 
 install:
 		mkdir -p $(PREFIX)/SMM

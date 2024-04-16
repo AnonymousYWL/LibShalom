@@ -4,7 +4,7 @@
 #include <math.h>
 #include "LibShalom.h"
 
-int Tm=0, Tn=0, T;
+int Tm=0, Tn=0, T=64;
 
 void SGEMM_NT_KERNEL_MP(float *C, float *A, float *B, long	M, long N, long K, 
 			long LN, long LK, float *SB, long k_tag)

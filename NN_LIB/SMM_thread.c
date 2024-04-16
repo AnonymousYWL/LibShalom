@@ -9,36 +9,38 @@
 
 using namespace std;
 
-vector<int>vec;
+vector<int>vec{1,2,4,8,16,32,64};
 
 void Dete_grad_N_threads_nums(int T, long M, long N, int transa, int transb)
 {
-	int i;
+	int i, temp;
 	if(Tm==0)
     {
 		// Determines the number of threads to parallelize the N-dimension
-		Tn= ceil(sqrt(T * N / M));
+		if(transb == 0)
+		{
+			Tn= ceil(sqrt(4 *T * (float)N / (float)M));
+		}
+		else
+			Tn = ceil(sqrt(T * (float)N / (float)M));
 		for(i = 0;  i < vec.size(); i++)
 		{
 			if(Tn <= vec[i])
 			{
-				Tn = vec[i];
+				temp = vec[i];
+				if(i > 0 && (Tn - vec[i-1] <= vec[i] - Tn))
+				{	
+					Tn = vec[i-1];			
+				}
+				else
+				{
+					Tn = temp;
+				}
 				break;
 			}
 		}
 		if(Tn >= T)
 			Tn = T;
-		else
-		{
-			if(transa == 0 && transb ==0 && (M / N ) < 10)
-			{
-				if((M / Tm) < 2 * (N / Tn))
-				{
-					Tn = vec[i + 1];
-				}
-			}
-
-		}
 		// Determines the number of threads to parallelize the M-dimension
 		Tm = T / Tn;
 	}
@@ -51,7 +53,7 @@ void Dete_grad_M_threads_nums(int T, long M, long N, int transa, int transb)
 	if(Tm==0)
     {
 		// Determines the number of threads to parallelize the M-dimension
-		Tm= ceil(sqrt(T * M / N));
+		Tm= ceil(sqrt(T * (float)M / (float)N));
 		for(i = 0;  i < vec.size(); i++)
 		{
 			if(Tm <= vec[i])
@@ -78,14 +80,22 @@ void LibShalom_sgemm_mp(int transa, int transb, float *C, float *A,
 	
 	if(/*(transa == 0) &&*/ (transb == 1))
 	{
-		Dete_grad_N_threads_nums(T, M, N, transa, transb);
-		SGEMM_NT_mp(C, A, B, M ,N , K);
+		if(M < N)
+		{
+			Dete_grad_N_threads_nums(T, M, N, transa, transb);
+			Small_NGM_NT_SGEMM(C, A, B, M ,N ,K, N);
+		}
+		else
+		{
+			Dete_grad_M_threads_nums(T, M, N, transa, transb);
+			Small_MGN_NT_SGEMM(C, A, B, M ,N ,K, N);
+		}
 	}
 	else if(/*(transa == 0) &&*/ (transb == 0))
 	{
 
 		// M >> N
-		if((M / N)>= 10)
+		if((M / N)>=5)
 		{
 
 			Dete_grad_M_threads_nums(T, M, N, transa, transb);

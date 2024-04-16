@@ -15,7 +15,6 @@ using namespace std;
 #define GEMM_N 4096
 #define GEMM_M 256
 
-
 //All divisors of the total number of threads
 extern vector<int>vec;
 extern int Tm, Tn, T;
@@ -30,6 +29,8 @@ void SGEMM_NT_mp(float *C, float *A, float *B, long M, long N, long K);
 void SGEMM_NN_mp(float *C, float *A, float *B, long M, long N, long K);
 void Small_NGM_NN_SGEMM(float *C, float *A, float *B, long M, long N, long K, long LD);
 void Small_MGN_NN_SGEMM(float *C, float *A, float *B, long M, long N, long K, long LD);
+void Small_NGM_NT_SGEMM(float *C, float *A, float *B, long M, long N, long K, long LD);
+void Small_MGN_NT_SGEMM(float *C, float *A, float *B, long M, long N, long K, long LD);
 void SGEMM_NT_kernel_exist_1(float *C, float *A, float *B, long	M, long N, long K, 
 			 	long LN, long LK, float *SB, long k_tag);
 
