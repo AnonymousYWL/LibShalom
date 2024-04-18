@@ -8,7 +8,8 @@ processors by improving the shortcomings of existing BLAS libraries, such as pac
 __This work continues to be optimized, and we need some time. Packing at micro-kernel is key to improving performance. This trick can even be used on large-scale GEMM.__
 
 # Reference
-Weiling Yang, Jianbin Fang, Dezun Dong, Xing Su, Zheng Wang. LIBSHALOM: optimizing small and irregular-shaped matrix multiplications on ARMv8 multi-cores (SC 2021)
+Weiling Yang, Jianbin Fang, Dezun Dong, Xing Su, Zheng Wang. LIBSHALOM: optimizing small and irregular-shaped matrix multiplications on ARMv8 multi-cores (SC 2021).
+DOI: [https://dl.acm.org/doi/10.1145/3458817.3476217] (https://dl.acm.org/doi/10.1145/3458817.3476217)
 
 # Software dependences
 - [GNU Compiler (GCC)](https://gcc.gnu.org/) (>=v8.2)
